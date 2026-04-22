@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400&display=swap');
+
+:root {
+  --crema: #FDFBF7;
+  --marron-oscuro: #5D4037;
+  --marron-claro: #8D6E63;
+  --dorado: #C5A059;
+}
+
+body {
+  background-color: var(--crema);
+  color: var(--marron-oscuro);
+  font-family: 'Lora', serif; 
+  margin: 0;
+}
