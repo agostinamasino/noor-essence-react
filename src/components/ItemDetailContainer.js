@@ -1,39 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getDoc, doc } from 'firebase/firestore'; 
-import { db } from '../services/firebaseConfig'; 
+import { getProductById } from '../services/firebase/firestore/products'; 
 import ItemDetail from './ItemDetail';
 
 const ItemDetailContainer = () => {
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     
-
     const { itemId } = useParams(); 
 
     useEffect(() => {
         setLoading(true);
 
-        const docRef = doc(db, 'products', itemId);
-
-
-        getDoc(docRef)
-            .then(response => {
-                if (response.exists()) {
-                    const data = response.data();
-                    const productAdapted = { 
-                        id: response.id, 
-                        name: data.nombre, 
-                        price: data.precio, 
-                        category: data.categoria,
-                        img: data.img,
-                        stock: data.stock,
-                        description: data.descripcion 
-                    };
-                    setProduct(productAdapted);
-                } else {
-                    console.error("El producto no existe en Firebase");
-                }
+        getProductById(itemId)
+            .then(product => {
+                setProduct(product);
             })
             .catch(error => {
                 console.error("Error al obtener el detalle:", error);
@@ -41,12 +22,13 @@ const ItemDetailContainer = () => {
             .finally(() => {
                 setLoading(false);
             });
+            
     }, [itemId]);
 
     return (
-        <div style={{ padding: '20px', backgroundColor: '#FDFBF7', minHeight: '80vh' }}>
+        <div style={styles.container}>
             {loading ? (
-                <h2 style={{ textAlign: 'center', color: '#C5A059', marginTop: '50px' }}>
+                <h2 style={styles.loader}>
                     Cargando detalles de la fragancia...
                 </h2>
             ) : product ? (
@@ -56,6 +38,19 @@ const ItemDetailContainer = () => {
             )}
         </div>
     );
+};
+
+const styles = {
+    container: { 
+        padding: '20px', 
+        backgroundColor: '#FDFBF7', 
+        minHeight: '80vh' 
+    },
+    loader: { 
+        textAlign: 'center', 
+        color: '#C5A059', 
+        marginTop: '50px' 
+    }
 };
 
 export default ItemDetailContainer;

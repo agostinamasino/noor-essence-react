@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ItemList from './ItemList';
 import { useParams } from 'react-router-dom';
-import { getDocs, collection, query, where } from 'firebase/firestore'; 
-import { db } from '../services/firebaseConfig'; 
+import { getProducts } from '../services/firebase/firestore/products'; 
 
 const ItemListContainer = ({ greeting }) => {
     const [products, setProducts] = useState([]);
@@ -12,25 +11,10 @@ const ItemListContainer = ({ greeting }) => {
     useEffect(() => {
         setLoading(true);
 
-        const collectionRef = categoryId 
-            ? query(collection(db, 'products'), where('categoria', '==', categoryId))
-            : collection(db, 'products');
 
-        getDocs(collectionRef)
-            .then(response => {
-                const productsAdapted = response.docs.map(doc => {
-                    const data = doc.data();
-                    return { 
-                        id: doc.id, 
-                        name: data.nombre,
-                        price: data.precio,
-                        category: data.categoria, 
-                        img: data.img,
-                        stock: data.stock,
-                        description: data.descripcion
-                    };
-                });
-                setProducts(productsAdapted);
+        getProducts(categoryId)
+            .then(products => {
+                setProducts(products);
             })
             .catch(error => {
                 console.error("Error al cargar productos:", error);
@@ -57,6 +41,7 @@ const ItemListContainer = ({ greeting }) => {
         </main>
     );
 };
+
 
 const styles = {
     container: {
